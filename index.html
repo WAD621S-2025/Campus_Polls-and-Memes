@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUST Campus Polls & Memes Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      color: #e0e0e0;
+      background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Image Layer */
+    body::before {
+      content: "";
+      background-image: url('meme-background-u260cqghqox0mz3d.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.2;
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+    }
+
+    /* Header & Footer */
+    header, footer {
+      text-align: center;
+      padding: 1.5em;
+      background: linear-gradient(90deg, #004aad, #007bff);
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    header h1 {
+      margin-bottom: 0.3em;
+      font-size: 2.2em;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    /* Toggle Button */
+    .toggle-mode {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      background: #007bff;
+      color: #fff;
+      padding: 0.5em 1em;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      font-weight: bold;
+      z-index: 999;
+      transition: background 0.3s;
+    }
+    .toggle-mode:hover { background: #00aaff; }
+
+    /* Container Layout */
+    .container {
+      display: flex;
+      gap: 2rem;
+      padding: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .left, .right {
+      flex: 1 1 400px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .left:hover, .right:hover { transform: translateY(-5px); }
+
+    h2, h3 { margin-top: 0; color: #fff; }
+
+    /* Buttons */
+    button {
+      background: linear-gradient(90deg, #007bff, #00d4ff);
+      color: white;
+      border: none;
+      padding: 0.6em 1em;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+    button:hover { background: linear-gradient(90deg, #00d4ff, #007bff); }
+
+    /* Inputs */
+    input[type="text"], input[type="file"], input[type="password"] {
+      width: 100%;
+      padding: 0.6em;
+      margin: 0.4em 0;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    input::placeholder { color: #ccc; }
+
+    /* Poll & Meme Cards */
+    .poll-card, .upload-card, .gallery {
+      margin-bottom: 2rem;
+    }
+
+    .meme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .meme-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 0.5rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .meme-card:hover { 
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    }
+
+    .meme-card img { max-width: 100%; border-radius: 12px; }
+
+    .like-btn {
+      background: transparent;
+      color: #ff6b81;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+    .like-btn:hover { color: #ff4757; }
+
+    /* Dark Mode */
+    .dark-mode { background: #111; color: #eee; }
+    .dark-mode header, .dark-mode footer { background: #222; }
+
+    /* Login Modal */
+    .login-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .login-box {
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      backdrop-filter: blur(15px);
+    }
+    .login-box input { margin-bottom: 1rem; }
+  </style>
+</head>
+
+<body>
+  <div class="toggle-mode" id="mode-toggle">🌙 Dark Mode</div>
+
+  <header>
+    <h1>NUST Campus Polls & Memes Platform</h1>
+    <p>Vote, Upload & Laugh with the Campus Community</p>
+    <button id="login-btn">Login</button>
+  </header>
+
+  <main class="container">
+    <!-- POLL SECTION -->
+    <section class="left">
+      <article class="poll-card">
+        <h2 id="poll-title">Who’s the funniest lecturer?</h2>
+        <form id="poll-form">
+          <div id="options">
+            <label><input type="radio" name="vote" value="A"> Mr. Adams</label><br>
+            <label><input type="radio" name="vote" value="B"> Dr. Liza</label><br>
+            <label><input type="radio" name="vote" value="C"> Prof. Moyo</label><br>
+          </div>
+          <div class="poll-actions">
+            <button type="submit">Vote</button>
+            <button type="button" id="refresh-results">Refresh Results</button>
+          </div>
+        </form>
+        <div id="results"></div>
+      </article>
+
+      <article class="create-poll">
+        <h3>Create Quick Poll (demo)</h3>
+        <form id="create-poll-form">
+          <input name="question" placeholder="Question (e.g. Best lecturer?)" required>
+          <input name="opt1" placeholder="Option 1" required>
+          <input name="opt2" placeholder="Option 2" required>
+          <input name="opt3" placeholder="Option 3 (optional)">
+          <button type="submit">Create Poll</button>
+        </form>
+      </article>
+    </section>
+
+    <!-- MEME SECTION -->
+    <aside class="right">
+      <section class="upload-card">
+        <h3>Upload a Meme</h3>
+        <form id="meme-form" enctype="multipart/form-data">
+          <input type="file" name="meme" id="meme-input" accept="image/*" required>
+          <input type="text" name="caption" placeholder="Caption (optional)">
+          <button type="submit">Upload Meme</button>
+        </form>
+        <div id="upload-status"></div>
+      </section>
+
+      <section class="gallery">
+        <h3>Recent Memes</h3>
+        <input type="text" id="search-meme" placeholder="Search memes..." />
+        <div id="meme-gallery" class="meme-grid">
+          <div class="meme-card">
+            <img src="unnamed.png" alt="Funny meme">
+            <p>When exam time hits 😭</p>
+            <button class="like-btn">❤️ <span class="like-count">3</span></button>
+          </div>
+
+          <div class="meme-card">
+            <img src="2017-04-07-meme-1.jpg" alt="Funny meme">
+            <p>Tired students 😭</p>
+            <button class="like-btn">❤️ <span class="like-count">5</span></button>
+          </div>
+
+          <div class="meme-card">
+            <img src="Yoda_meme.jpeg" alt="Meme">
+            <p>That group project guy 😤</p>
+            <button class="like-btn">❤️ <span class="like-count">1</span></button>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer>
+    <small>© 2025 NUST Campus Polls Platform</small>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="login-modal" id="login-modal">
+    <div class="login-box">
+      <h3>Login</h3>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button id="login-submit">Login</button>
+      <button id="close-login">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('mode-toggle');
+    toggle.onclick = () => {
+      document.body.classList.toggle('dark-mode');
+      toggle.textContent = document.body.classList.contains('dark-mode')
+        ? '☀️ Light Mode' : '🌙 Dark Mode';
+    };
+
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const countSpan = btn.querySelector('.like-count');
+        if (countSpan) {
+          let count = parseInt(countSpan.textContent);
+          countSpan.textContent = count + 1;
+          btn.disabled = true;
+        }
+      });
+    });
+
+    document.getElementById('search-meme').addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.meme-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(term) ? '' : 'none';
+      });
+    });
+
+    const loginBtn = document.getElementById('login-btn');
+    const loginModal = document.getElementById('login-modal');
+    const closeLogin = document.getElementById('close-login');
+    loginBtn.onclick = () => loginModal.style.display = 'flex';
+    closeLogin.onclick = () => loginModal.style.display = 'none';
+  </script>
+</body>
+</html>
